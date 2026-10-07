@@ -1,0 +1,7 @@
+{
+  "name": "Khung Tranh Kỹ Thuật Số Thông Minh Cho iPad Cũ",
+  "description": "Biến iPad mini, iPhone cũ và tablet thành khung tranh ảnh gia đình kỹ thuật số thông minh với âm lịch, thời tiết, âm thanh thư giãn và chống tắt màn hình.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

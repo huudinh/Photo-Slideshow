@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000000;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+}
+
+/* Typography styles */
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+
+.font-roboto-slab {
+  font-family: 'Roboto Slab', serif;
+}
+
+.font-serif-luxury {
+  font-family: 'Roboto Slab', 'Playfair Display', Georgia, serif;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-script {
+  font-family: 'Great Vibes', cursive;
+}
+
+/* Realistic Frame Borders */
+.frame-oak-wood {
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.6),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4),
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(160, 110, 60, 0.4);
+  background: linear-gradient(135deg, #c99355 0%, #a46d32 40%, #875422 70%, #5d3511 100%);
+}
+
+.frame-dark-walnut {
+  box-shadow: 
+    inset 0 0 25px rgba(0, 0, 0, 0.85),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.7),
+    0 30px 60px -15px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(60, 35, 20, 0.8);
+  background: linear-gradient(135deg, #442a1d 0%, #2d1b12 50%, #1c100a 100%);
+}
+
+.frame-nordic-white {
+  box-shadow: 
+    inset 0 0 15px rgba(0, 0, 0, 0.12),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.15),
+    0 20px 40px -10px rgba(0, 0, 0, 0.5);
+  background: #f8fafc;
+}
+
+.frame-gallery-black {
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.9),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    0 30px 60px -15px rgba(0, 0, 0, 0.95);
+  background: linear-gradient(145deg, #222226 0%, #111113 100%);
+}
+
+.frame-vintage-gold {
+  box-shadow: 
+    inset 0 0 25px rgba(110, 80, 20, 0.8),
+    inset 2px 2px 6px rgba(255, 230, 150, 0.6),
+    inset -2px -2px 6px rgba(50, 35, 5, 0.8),
+    0 25px 50px -12px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(135deg, #d4af37 0%, #aa8010 30%, #ffd700 55%, #8a6208 85%, #d4af37 100%);
+}
+
+.frame-polaroid {
+  background-color: #fcfbf9;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Inner Matting (Passe-partout) */
+.matte-white {
+  background: #fdfdfd;
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.25), inset -1px -1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.matte-ivory {
+  background: #fbf7ee;
+  box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.2), inset -1px -1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.matte-cream {
+  background: #f4eedb;
+  box-shadow: inset 2px 2px 7px rgba(0, 0, 0, 0.28);
+}
+
+.matte-charcoal {
+  background: #1e2024;
+  box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Ken Burns Pan and Zoom keyframes */
+@keyframes kenburns-1 {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.08) translate(-1.5%, -1%); }
+  100% { transform: scale(1.12) translate(1%, -1.5%); }
+}
+
+@keyframes kenburns-2 {
+  0% { transform: scale(1.12) translate(1%, 1.5%); }
+  50% { transform: scale(1.06) translate(-1%, 0.5%); }
+  100% { transform: scale(1) translate(0, 0); }
+}
+
+@keyframes kenburns-3 {
+  0% { transform: scale(1.05) translate(-2%, 1%); }
+  50% { transform: scale(1.1) translate(1.5%, -1%); }
+  100% { transform: scale(1.05) translate(0, 2%); }
+}
+
+.animate-ken-burns-1 {
+  animation: kenburns-1 25s ease-in-out infinite alternate;
+}
+
+.animate-ken-burns-2 {
+  animation: kenburns-2 25s ease-in-out infinite alternate;
+}
+
+.animate-ken-burns-3 {
+  animation: kenburns-3 25s ease-in-out infinite alternate;
+}
+
+/* Pixel Shift animation for Night Mode anti-burn-in */
+@keyframes pixel-shift {
+  0% { transform: translate(0px, 0px); }
+  25% { transform: translate(6px, -4px); }
+  50% { transform: translate(-5px, 5px); }
+  75% { transform: translate(-4px, -5px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+.animate-pixel-shift {
+  animation: pixel-shift 300s ease-in-out infinite;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
