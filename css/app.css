@@ -1,0 +1,282 @@
+/* =========================================================================
+   Khung Tranh Kỹ Thuật Số — CSS tự viết
+   Phần này KHÔNG do Tailwind sinh ra: vân khung tranh, chuyển động Ken Burns,
+   chống lưu ảnh và vài chỉnh sửa nền tảng. Nạp SAU css/tailwind.css.
+   ========================================================================= */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+  color: #f1f5f9;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Bấm nút phản hồi ngay, không chờ "chạm 2 lần để phóng to". */
+a,
+button,
+input,
+select,
+textarea,
+label,
+[role='button'] {
+  touch-action: manipulation;
+}
+
+/* --------------------------------------------------------------- Bộ chữ */
+
+.font-roboto {
+  font-family: 'Roboto', sans-serif;
+}
+.font-roboto-slab {
+  font-family: 'Roboto Slab', serif;
+}
+.font-serif-luxury {
+  font-family: 'Roboto Slab', 'Playfair Display', Georgia, serif;
+}
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+.font-script {
+  font-family: 'Great Vibes', cursive;
+}
+
+/* ------------------------------------------------- Vân khung tranh thật */
+
+.frame-oak-wood {
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.6),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.2),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.4),
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(160, 110, 60, 0.4);
+  background: linear-gradient(135deg, #c99355 0%, #a46d32 40%, #875422 70%, #5d3511 100%);
+}
+
+.frame-dark-walnut {
+  box-shadow:
+    inset 0 0 25px rgba(0, 0, 0, 0.85),
+    inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.7),
+    0 30px 60px -15px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(60, 35, 20, 0.8);
+  background: linear-gradient(135deg, #442a1d 0%, #2d1b12 50%, #1c100a 100%);
+}
+
+.frame-nordic-white {
+  box-shadow:
+    inset 0 0 15px rgba(0, 0, 0, 0.12),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 5px rgba(0, 0, 0, 0.15),
+    0 20px 40px -10px rgba(0, 0, 0, 0.5);
+  background: #f8fafc;
+}
+
+.frame-gallery-black {
+  box-shadow:
+    inset 0 0 20px rgba(0, 0, 0, 0.9),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.15),
+    0 30px 60px -15px rgba(0, 0, 0, 0.95);
+  background: linear-gradient(145deg, #222226 0%, #111113 100%);
+}
+
+.frame-vintage-gold {
+  box-shadow:
+    inset 0 0 25px rgba(110, 80, 20, 0.8),
+    inset 2px 2px 6px rgba(255, 230, 150, 0.6),
+    inset -2px -2px 6px rgba(50, 35, 5, 0.8),
+    0 25px 50px -12px rgba(0, 0, 0, 0.9);
+  background: linear-gradient(135deg, #d4af37 0%, #aa8010 30%, #ffd700 55%, #8a6208 85%, #d4af37 100%);
+}
+
+.frame-polaroid {
+  background-color: #fcfbf9;
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ------------------------------------ Bo viền đệm (matte / passe-partout) */
+
+.matte-white {
+  background: #fdfdfd;
+  box-shadow:
+    inset 2px 2px 6px rgba(0, 0, 0, 0.25),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.matte-ivory {
+  background: #fbf7ee;
+  box-shadow:
+    inset 2px 2px 6px rgba(0, 0, 0, 0.2),
+    inset -1px -1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.matte-cream {
+  background: #f4eedb;
+  box-shadow: inset 2px 2px 7px rgba(0, 0, 0, 0.28);
+}
+
+.matte-charcoal {
+  background: #1e2024;
+  box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* ------------------------------------------ Ken Burns: thu phóng điện ảnh */
+
+@keyframes kenburns-1 {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.08) translate(-1.5%, -1%);
+  }
+  100% {
+    transform: scale(1.12) translate(1%, -1.5%);
+  }
+}
+
+@keyframes kenburns-2 {
+  0% {
+    transform: scale(1.12) translate(1%, 1.5%);
+  }
+  50% {
+    transform: scale(1.06) translate(-1%, 0.5%);
+  }
+  100% {
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+@keyframes kenburns-3 {
+  0% {
+    transform: scale(1.05) translate(-2%, 1%);
+  }
+  50% {
+    transform: scale(1.1) translate(1.5%, -1%);
+  }
+  100% {
+    transform: scale(1.05) translate(0, 2%);
+  }
+}
+
+.animate-ken-burns-1 {
+  animation: kenburns-1 25s ease-in-out infinite alternate;
+}
+.animate-ken-burns-2 {
+  animation: kenburns-2 25s ease-in-out infinite alternate;
+}
+.animate-ken-burns-3 {
+  animation: kenburns-3 25s ease-in-out infinite alternate;
+}
+
+/* Ảnh vừa đổi thì hiện dần lên, thay cho hiệu ứng crossfade của React. */
+@keyframes photo-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-photo-in {
+  animation: photo-in 0.7s ease-out;
+}
+
+/* Hộp thoại và lớp phủ hiện ra mềm. */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pop-in {
+  animation: pop-in 0.2s ease-out;
+}
+
+/* ------------------------- Chống lưu ảnh (burn-in) cho màn hình iPad cũ */
+
+@keyframes pixel-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(6px, -4px);
+  }
+  50% {
+    transform: translate(-5px, 5px);
+  }
+  75% {
+    transform: translate(-4px, -5px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.animate-pixel-shift {
+  animation: pixel-shift 300s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------- Thanh cuộn gọn */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* --------------------------------------------------------- Điện thoại */
+
+/*
+ * iPhone/iPad tự phóng to trang khi chạm vào ô nhập có chữ nhỏ hơn 16px và
+ * không tự thu lại — phóng một lần là bố cục khung tranh hỏng tới khi tải lại.
+ */
+@media (max-width: 1023px), (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/*
+ * Làm mờ nền rất nặng với GPU của iPad đời cũ và là nguyên nhân chính gây giật
+ * khi mở hộp thoại. Các lớp phủ đều đã có nền tối 70–95% nên bỏ blur gần như
+ * không khác về mắt nhìn.
+ */
+@media (pointer: coarse) {
+  .backdrop-blur-sm,
+  .backdrop-blur,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}

@@ -1,37 +1,36 @@
 /**
- * Bộ quản lý giữ sáng màn hình đa nền tảng (Screen Wake Lock)
- * Tương thích cả thiết bị hiện đại và các dòng iPad/iPhone cũ (iOS 12+)
+ * Giữ sáng màn hình, chạy được cả trên máy mới lẫn iPad/iPhone đời cũ.
+ *
+ * Ưu tiên Screen Wake Lock API chuẩn W3C. Safari trên iOS cũ (iPad 2/3/4/mini,
+ * iPhone 6) không có API đó nên rơi về mẹo phát một đoạn audio im lặng lặp vô
+ * tận — iOS coi tab đang phát media nên không tắt màn.
  */
 
 class ScreenWakeLockManager {
-  private wakeLockSentinel: any = null;
-  private isSupported: boolean = false;
-  private fallbackAudio: HTMLAudioElement | null = null;
-  private isActive: boolean = false;
-
   constructor() {
+    this.wakeLockSentinel = null;
     this.isSupported = 'wakeLock' in navigator;
+    this.fallbackAudio = null;
+    this.isActive = false;
+
     this.handleVisibilityChange = this.handleVisibilityChange.bind(this);
-    if (typeof document !== 'undefined') {
-      document.addEventListener('visibilitychange', this.handleVisibilityChange);
-      document.addEventListener('fullscreenchange', this.handleVisibilityChange);
-    }
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    document.addEventListener('fullscreenchange', this.handleVisibilityChange);
   }
 
-  private handleVisibilityChange() {
+  /** Quay lại tab là xin lại khóa — hệ điều hành tự nhả khi ẩn tab. */
+  handleVisibilityChange() {
     if (this.isActive && document.visibilityState === 'visible') {
       this.requestWakeLock();
     }
   }
 
-  public async requestWakeLock(): Promise<boolean> {
+  async requestWakeLock() {
     this.isActive = true;
 
-    // 1. Phương thức chuẩn W3C Screen Wake Lock API
     if (this.isSupported) {
       try {
         if (!this.wakeLockSentinel || this.wakeLockSentinel.released) {
-          // @ts-ignore
           this.wakeLockSentinel = await navigator.wakeLock.request('screen');
           this.wakeLockSentinel.addEventListener('release', () => {
             if (this.isActive && document.visibilityState === 'visible') {
@@ -45,18 +44,17 @@ class ScreenWakeLockManager {
       }
     }
 
-    // 2. Phương thức dự phòng cho Safari iOS cũ (iPhone 6, iPad 2/3/4/mini):
-    // Sử dụng file audio tĩnh im lặng dạng Data URI lặp vô tận (silent loop)
     try {
       if (!this.fallbackAudio) {
-        // Tín hiệu WAV im lặng 0.5s dạng base64
-        const silentAudioUri = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+        // WAV im lặng dạng Data URI, phát lặp vô tận.
+        const silentAudioUri =
+          'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
         this.fallbackAudio = new Audio(silentAudioUri);
         this.fallbackAudio.loop = true;
         this.fallbackAudio.volume = 0.01;
       }
       this.fallbackAudio.play().catch(() => {
-        // Có thể cần người dùng tương tác trước khi phát trên iOS cũ
+        // iOS cũ đòi người dùng chạm một lần trước khi cho phát.
       });
       return true;
     } catch (e) {
@@ -64,22 +62,26 @@ class ScreenWakeLockManager {
     }
   }
 
-  public releaseWakeLock() {
+  releaseWakeLock() {
     this.isActive = false;
     if (this.wakeLockSentinel) {
       try {
         this.wakeLockSentinel.release();
-      } catch (e) {}
+      } catch (e) {
+        /* đã nhả rồi */
+      }
       this.wakeLockSentinel = null;
     }
     if (this.fallbackAudio) {
       try {
         this.fallbackAudio.pause();
-      } catch (e) {}
+      } catch (e) {
+        /* chưa từng phát */
+      }
     }
   }
 
-  public getStatus(): boolean {
+  getStatus() {
     return this.isActive;
   }
 }

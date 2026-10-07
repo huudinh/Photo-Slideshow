@@ -1,0 +1,12 @@
+/*
+ * Nguồn để sinh ra css/tailwind.css.
+ *
+ * File này CHỈ cần khi bạn muốn dựng lại CSS sau khi thêm lớp Tailwind mới:
+ *   npx @tailwindcss/cli -i css/tailwind.src.css -o css/tailwind.css --minify
+ *
+ * Ứng dụng khi chạy không đọc file này.
+ */
+@import "tailwindcss";
+
+@source "../index.html";
+@source "../js/**/*.js";

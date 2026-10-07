@@ -2,31 +2,72 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
     <title>Khung Tranh Kỹ Thuật Số Thông Minh Cho iPad Cũ</title>
-    <meta name="description" content="Biến iPad mini, iPhone cũ và tablet thành khung tranh ảnh gia đình kỹ thuật số thông minh với âm lịch, thời tiết, âm thanh thư giãn và chống tắt màn hình." />
+    <meta
+      name="description"
+      content="Biến iPad mini, iPhone cũ và tablet thành khung tranh ảnh gia đình kỹ thuật số thông minh với âm lịch, thời tiết, âm thanh thư giãn và chống tắt màn hình."
+    />
     <meta property="og:title" content="Khung Tranh Kỹ Thuật Số Thông Minh Cho iPad Cũ" />
-    <meta property="og:description" content="Biến iPad mini, iPhone cũ và tablet thành khung tranh ảnh gia đình kỹ thuật số thông minh với âm lịch, thời tiết, âm thanh thư giãn và chống tắt màn hình." />
+    <meta
+      property="og:description"
+      content="Biến iPad mini, iPhone cũ và tablet thành khung tranh ảnh gia đình kỹ thuật số thông minh với âm lịch, thời tiết, âm thanh thư giãn và chống tắt màn hình."
+    />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    
-    <!-- iOS Web App & Fullscreen Support for Old iPad / iPhone -->
+
+    <!-- Chạy như app trên iPad / iPhone cũ, ẩn thanh Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Khung Tranh" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#121214" />
-    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    
-    <!-- Google Fonts with Roboto for clean, modern readability -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="public/icon.svg" />
+    <link rel="alternate icon" sizes="48x48" href="public/favicon.ico" />
+    <link rel="apple-touch-icon" href="public/apple-touch-icon.png" />
+    <link rel="manifest" href="manifest.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      CSS Tailwind đã dựng sẵn thành file tĩnh. Không cần build, không cần
+      node_modules — mở là chạy.
+
+      Nếu bạn thêm lớp Tailwind MỚI vào js/ mà không thấy ăn, có hai cách:
+        1. Viết thẳng CSS cho phần đó trong css/app.css (không cần công cụ gì).
+        2. Dựng lại file này bằng Tailwind CLI (xem README, mục "Sửa giao diện").
+    -->
+    <link rel="stylesheet" href="css/tailwind.css" />
+    <link rel="stylesheet" href="css/app.css" />
   </head>
-  <body class="bg-black text-slate-100 overflow-hidden select-none touch-none antialiased">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
+  <body class="bg-black text-slate-100 overflow-hidden select-none antialiased">
+    <!--
+      Năm vùng vẽ độc lập. Tách ra để đồng hồ nhảy mỗi giây không kéo theo vẽ
+      lại khung ảnh — xem js/app.js, phần `regions`.
+    -->
+    <main id="app" class="relative w-screen h-screen overflow-hidden bg-black text-white font-roboto">
+      <div id="region-frame" class="absolute inset-0"></div>
+      <div id="region-widgets"></div>
+      <div id="region-controls"></div>
+      <div id="region-night"></div>
+      <div id="region-modal"></div>
+    </main>
+
+    <noscript>
+      <div style="padding: 2rem; color: #fff; font-family: sans-serif">
+        Ứng dụng khung tranh cần bật JavaScript để chạy.
+      </div>
+    </noscript>
+
+    <script type="module" src="js/app.js"></script>
   </body>
 </html>
-

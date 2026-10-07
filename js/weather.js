@@ -1,102 +1,97 @@
 /**
- * Dịch vụ Định vị GPS Trình duyệt & Thời tiết Thời gian thực
- * Sử dụng W3C Geolocation API + Open-Meteo Free API (Không cần API key, độ chính xác cao tại Việt Nam)
+ * Định vị GPS trình duyệt + thời tiết thời gian thực.
+ *
+ * Dùng W3C Geolocation API và Open-Meteo (miễn phí, không cần API key, phủ tốt
+ * ở Việt Nam). Mọi lỗi đều rơi về dữ liệu dự phòng chứ không ném ra ngoài —
+ * khung tranh treo tường thà hiện số liệu cũ còn hơn hiện ô trống.
  */
 
-export interface RealWeatherData {
-  cityName: string;
-  temperature: number;
-  condition: string;
-  weatherCode: number;
-  humidity: number;
-  windSpeed: number;
-  isDay: boolean;
-  lastUpdated: Date;
-}
-
-// Map WMO Weather Codes to Vietnamese descriptions
-export function getWeatherDescription(code: number, isDay: boolean = true): { text: string; iconType: 'sun' | 'cloud-sun' | 'cloud' | 'rain' | 'thunder' | 'snow' | 'fog' } {
+/** Quy mã WMO sang mô tả tiếng Việt. */
+export function getWeatherDescription(code, isDay = true) {
   switch (code) {
     case 0:
-      return { text: isDay ? 'Trời quang, nắng đẹp' : 'Trời quang, đêm mát mẻ', iconType: isDay ? 'sun' : 'cloud-sun' };
+      return {
+        text: isDay ? 'Trời quang, nắng đẹp' : 'Trời quang, đêm mát mẻ',
+        iconType: isDay ? 'sun' : 'cloud-sun',
+      };
     case 1:
-      return { text: isDay ? 'Nắng nhẹ, ít mây' : 'Trời trong, ít mây', iconType: 'cloud-sun' };
+      return {
+        text: isDay ? 'Nắng nhẹ, ít mây' : 'Trời trong, ít mây',
+        iconType: 'cloud-sun',
+      };
     case 2:
-      return { text: 'Nhiều mây, trời dịu', iconType: 'cloud-sun' };
+      return {text: 'Nhiều mây, trời dịu', iconType: 'cloud-sun'};
     case 3:
-      return { text: 'Trời âm u, nhiều mây', iconType: 'cloud' };
+      return {text: 'Trời âm u, nhiều mây', iconType: 'cloud'};
     case 45:
     case 48:
-      return { text: 'Có sương mù', iconType: 'fog' };
+      return {text: 'Có sương mù', iconType: 'fog'};
     case 51:
     case 53:
     case 55:
-      return { text: 'Mưa phùn lất phất', iconType: 'rain' };
+      return {text: 'Mưa phùn lất phất', iconType: 'rain'};
     case 61:
     case 63:
     case 65:
-      return { text: 'Mưa rào nhẹ', iconType: 'rain' };
+      return {text: 'Mưa rào nhẹ', iconType: 'rain'};
     case 66:
     case 67:
     case 80:
     case 81:
     case 82:
-      return { text: 'Mưa rào rải rác', iconType: 'rain' };
+      return {text: 'Mưa rào rải rác', iconType: 'rain'};
     case 71:
     case 73:
     case 75:
     case 77:
     case 85:
     case 86:
-      return { text: 'Có tuyết rơi nhẹ', iconType: 'snow' };
+      return {text: 'Có tuyết rơi nhẹ', iconType: 'snow'};
     case 95:
     case 96:
     case 99:
-      return { text: 'Có dông sét, mưa rào', iconType: 'thunder' };
+      return {text: 'Có dông sét, mưa rào', iconType: 'thunder'};
     default:
-      return { text: 'Thời tiết mát mẻ', iconType: 'cloud-sun' };
+      return {text: 'Thời tiết mát mẻ', iconType: 'cloud-sun'};
   }
 }
 
 class WeatherLocationService {
-  private cachedData: RealWeatherData | null = null;
-  private lastFetchTime: number = 0;
-  private CACHE_DURATION = 15 * 60 * 1000; // 15 minutes cache
+  constructor() {
+    this.cachedData = null;
+    this.lastFetchTime = 0;
+    this.CACHE_DURATION = 15 * 60 * 1000; // 15 phút
+  }
 
-  /**
-   * Lấy tọa độ GPS từ trình duyệt
-   */
-  public getBrowserLocation(): Promise<{ latitude: number; longitude: number }> {
+  /** Lấy tọa độ GPS từ trình duyệt. */
+  getBrowserLocation() {
     return new Promise((resolve, reject) => {
-      if (typeof window === 'undefined' || !navigator.geolocation) {
+      if (!navigator.geolocation) {
         reject(new Error('Trình duyệt không hỗ trợ Geolocation GPS'));
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        (position) =>
           resolve({
             latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-        },
+            longitude: position.coords.longitude,
+          }),
         (error) => {
           console.warn('Geolocation access error:', error.message);
           reject(error);
         },
         {
-          enableHighAccuracy: false, // Low power for older iPads
+          enableHighAccuracy: false, // tiết kiệm pin cho iPad cũ
           timeout: 10000,
-          maximumAge: 300000 // 5 minutes cache
+          maximumAge: 300000,
         }
       );
     });
   }
 
-  /**
-   * Lấy tên thành phố/tỉnh từ tọa độ GPS (Reverse Geocoding)
-   */
-  private async getCityNameFromCoords(lat: number, lon: number): Promise<string> {
+  /** Đổi tọa độ thành tên tỉnh/thành (reverse geocoding). */
+  async getCityNameFromCoords(lat, lon) {
     try {
       const res = await fetch(
         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=vi`
@@ -104,9 +99,7 @@ class WeatherLocationService {
       if (res.ok) {
         const data = await res.json();
         const city = data.city || data.principalSubdivision || data.locality || data.countryName;
-        if (city) {
-          return city.replace(/^(Thành phố|Tỉnh)\s+/i, '');
-        }
+        if (city) return city.replace(/^(Thành phố|Tỉnh)\s+/i, '');
       }
     } catch (e) {
       console.warn('Reverse geocoding error:', e);
@@ -114,11 +107,8 @@ class WeatherLocationService {
     return 'Vị trí hiện tại';
   }
 
-  /**
-   * Tải thời tiết theo tọa độ GPS thời gian thực
-   */
-  public async fetchWeatherByGPS(): Promise<RealWeatherData> {
-    // Return cache if still fresh
+  /** Thời tiết theo tọa độ GPS, có nhớ đệm 15 phút. */
+  async fetchWeatherByGPS() {
     const now = Date.now();
     if (this.cachedData && now - this.lastFetchTime < this.CACHE_DURATION) {
       return this.cachedData;
@@ -129,19 +119,18 @@ class WeatherLocationService {
       const [cityName, weatherRes] = await Promise.all([
         this.getCityNameFromCoords(coords.latitude, coords.longitude),
         fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto`
-        )
+          `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}` +
+            '&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto'
+        ),
       ]);
 
-      if (!weatherRes.ok) {
-        throw new Error('Không thể tải dữ liệu thời tiết');
-      }
+      if (!weatherRes.ok) throw new Error('Không thể tải dữ liệu thời tiết');
 
       const weatherData = await weatherRes.json();
       const current = weatherData.current;
       const desc = getWeatherDescription(current.weather_code, current.is_day === 1);
 
-      const result: RealWeatherData = {
+      const result = {
         cityName: cityName || 'Vị trí của bạn',
         temperature: Math.round(current.temperature_2m),
         condition: desc.text,
@@ -149,34 +138,33 @@ class WeatherLocationService {
         humidity: current.relative_humidity_2m || 65,
         windSpeed: Math.round(current.wind_speed_10m || 10),
         isDay: current.is_day === 1,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
 
       this.cachedData = result;
       this.lastFetchTime = now;
       return result;
     } catch (error) {
-      // Fallback data
       return this.getFallbackWeather('Hà Nội');
     }
   }
 
-  /**
-   * Tải thời tiết theo tên thành phố thủ công
-   */
-  public async fetchWeatherByCityName(cityName: string): Promise<RealWeatherData> {
+  /** Thời tiết theo tên thành phố nhập tay. */
+  async fetchWeatherByCityName(cityName) {
     try {
-      // Geocoding city name via Open-Meteo
       const geoRes = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityName)}&count=1&language=vi&format=json`
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+          cityName
+        )}&count=1&language=vi&format=json`
       );
       if (!geoRes.ok) throw new Error('Geocoding failed');
       const geoData = await geoRes.json();
-      
+
       if (geoData.results && geoData.results.length > 0) {
         const place = geoData.results[0];
         const weatherRes = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto`
+          `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}` +
+            '&current=temperature_2m,relative_humidity_2m,weather_code,is_day,wind_speed_10m&timezone=auto'
         );
         if (weatherRes.ok) {
           const weatherData = await weatherRes.json();
@@ -191,7 +179,7 @@ class WeatherLocationService {
             humidity: current.relative_humidity_2m || 65,
             windSpeed: Math.round(current.wind_speed_10m || 10),
             isDay: current.is_day === 1,
-            lastUpdated: new Date()
+            lastUpdated: new Date(),
           };
         }
       }
@@ -202,7 +190,7 @@ class WeatherLocationService {
     return this.getFallbackWeather(cityName);
   }
 
-  public getFallbackWeather(cityName: string): RealWeatherData {
+  getFallbackWeather(cityName) {
     return {
       cityName: cityName || 'Hà Nội',
       temperature: 28,
@@ -211,9 +199,9 @@ class WeatherLocationService {
       humidity: 68,
       windSpeed: 12,
       isDay: true,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
   }
 }
 
-export const weatherLocationService = new WeatherLocationService();
+export const weatherService = new WeatherLocationService();

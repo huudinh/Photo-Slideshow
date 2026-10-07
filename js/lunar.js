@@ -12,7 +12,7 @@ const TIET_KHI = [
   'Đông chí', 'Tiểu hàn', 'Đại hàn', 'Lập xuân', 'Vũ thủy', 'Kinh trập'
 ];
 
-function jdFromDate(dd: number, mm: number, yy: number): number {
+function jdFromDate(dd, mm, yy) {
   const a = Math.floor((14 - mm) / 12);
   const y = yy + 4800 - a;
   const m = mm + 12 * a - 3;
@@ -23,7 +23,7 @@ function jdFromDate(dd: number, mm: number, yy: number): number {
   return jd;
 }
 
-function getNewMoonDay(k: number, timeZone: number): number {
+function getNewMoonDay(k, timeZone) {
   const T = k / 1236.85;
   const T2 = T * T;
   const T3 = T2 * T;
@@ -46,7 +46,7 @@ function getNewMoonDay(k: number, timeZone: number): number {
   return Math.floor(Jd + 0.5 + timeZone / 24);
 }
 
-function getSunLongitude(jdn: number, timeZone: number): number {
+function getSunLongitude(jdn, timeZone) {
   const T = (jdn - 2451545.0 + 0.5 - timeZone / 24) / 36525;
   const T2 = T * T;
   const dr = Math.PI / 180;
@@ -60,7 +60,7 @@ function getSunLongitude(jdn: number, timeZone: number): number {
   return Math.floor((L / Math.PI) * 6);
 }
 
-function getLunarMonth11(yy: number, timeZone: number): number {
+function getLunarMonth11(yy, timeZone) {
   const off = jdFromDate(31, 12, yy) - 2415021;
   const k = Math.floor(off / 29.530588853);
   let nm = getNewMoonDay(k, timeZone);
@@ -71,20 +71,7 @@ function getLunarMonth11(yy: number, timeZone: number): number {
   return nm;
 }
 
-export interface LunarDateResult {
-  lunarDay: number;
-  lunarMonth: number;
-  lunarYear: number;
-  isLeapMonth: boolean;
-  canChiYear: string;
-  canChiMonth: string;
-  canChiDay: string;
-  solarTerm: string;
-  formattedString: string;
-  shortString: string;
-}
-
-export function convertSolar2Lunar(dd: number, mm: number, yy: number, timeZone: number = 7): LunarDateResult {
+export function convertSolar2Lunar(dd, mm, yy, timeZone = 7) {
   const currentJd = jdFromDate(dd, mm, yy);
   const k = Math.floor((currentJd - 2415021.0769986) / 29.530588853);
   let monthStart = getNewMoonDay(k + 1, timeZone);
@@ -162,7 +149,7 @@ export function convertSolar2Lunar(dd: number, mm: number, yy: number, timeZone:
   };
 }
 
-export function getCurrentLunarDate(): LunarDateResult {
+export function getCurrentLunarDate() {
   const now = new Date();
   return convertSolar2Lunar(now.getDate(), now.getMonth() + 1, now.getFullYear(), 7);
 }
